@@ -1,0 +1,31 @@
+{% load static %}
+
+<html>
+    <head>
+        <title>Statistics</title>
+        <!-- bootstrap -->
+        <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Los Pollos Hermanos</a>
+                </div>
+            <ul class="nav navbar-nav">
+                <li><a href="#">Statistics</a></li>
+                <li><a href="#">Visualisation</a></li>
+            </ul>
+        </div>
+    </nav>
+
+        <div class="container">
+             {% block content %}{% endblock %}
+        </div>
+
+        <!-- bootstrap js -->
+        <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+        <script src="{% static "js/bootstrap.min.js" %}"></script>
+    </body>
+
+</html>
