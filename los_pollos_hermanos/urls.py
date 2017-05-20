@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from los_pollos_hermanos.views import AttackView, StatisticsView, \
-    VisualisationView
+    VisualisationView, AttackAPIView
 
 urlpatterns = [
     url(r'^statistics$', StatisticsView.as_view()),
