@@ -9,9 +9,10 @@ from los_pollos_hermanos.models import Attack, Gamer
 
 @admin.register(Attack)
 class AttackAdmin(ModelAdmin):
-    pass
+    list_display = ['attacker', 'victim', 'type', 'version', 'datetime', ]
 
 
 @admin.register(Gamer)
 class GamerAdmin(ModelAdmin):
-    pass
+    list_display = ['username', 'email', ]
+
