@@ -1,0 +1,91 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block content %}
+
+<div id="canvas-container">
+        <canvas class="col-xs-12" id="c" >
+        </canvas>
+    </div>
+
+    <script src="{% static "js/fabric.min.js" %}"></script>
+    <script>
+        (function() {
+
+            data = {"u1": 7, "u2": 8, "u3": 6, "u4": 7, "u5": 9};
+            data_plus = {"u1": 3, "u2": 4, "u3": 4, "u4": 2, "u5": 6};
+            data_minus = {"u1": 4, "u2": 4, "u3": 2, "u4": 5, "u5": 3};
+            var max_points = - Infinity;
+            for (var k in data) {
+                if (data[k] > max_points)
+                    max_points = data[k]
+            }
+
+            var canvas = this.__canvas = new fabric.StaticCanvas('c');
+
+            canvas.setHeight(700);
+            canvas.setWidth($('#canvas-container').width() );
+
+            // compute max radius of a user circle
+            var pi = 3.14;
+            var minhw = Math.min(canvas.getWidth(), canvas.getHeight());
+            var num_users = Object.keys(data).length
+
+
+            // radius of a big circle
+            var max_circ_size = (pi * minhw) / (num_users * (1 + pi));
+            var big_radius = minhw - 20;
+
+            var user_circles = [];
+            var i = 0;
+
+            for (k in data)
+            {
+                console.log(max_points);
+                angle = i * 2 * pi / num_users;
+                var size = max_circ_size * 0.7 * data[k] / max_points;
+                console.log(size);
+                c = new fabric.Circle({
+                        top: canvas.getHeight() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.sin(angle) - size,
+                        left: canvas.getWidth() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.cos(angle) - size,
+                        radius: size,
+                        fill: '#aaaaaa' })
+                user_circles.push(c);
+
+                rect_h = 20;
+                rect_w = max_circ_size * 2 - 5;
+                ratio = data_plus[k] / data[k];
+                r1 = new fabric.Rect({
+                        top: canvas.getHeight() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.sin(angle) - rect_h / 2,
+                        left: canvas.getWidth() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.cos(angle) - rect_w / 2,
+                        width: rect_w * ratio,
+                        height: rect_h,
+                        fill: 'green' });
+
+                r2 = new fabric.Rect({
+                        top: canvas.getHeight() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.sin(angle) - rect_h / 2,
+                        left: canvas.getWidth() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.cos(angle) - rect_w / 2 + rect_w * ratio,
+                        width: rect_w * (1 - ratio),
+                        height: rect_h,
+                        fill: 'red' })
+
+                canvas.add(c, r1, r2);
+
+                i++;
+            }
+
+
+
+/*
+             function animate() {
+                canvas.item(0).animate('top', canvas.item(0).getTop() === 500 ? '100' : '500', {
+                    duration: 1000,
+                    onChange: canvas.renderAll.bind(canvas),
+                    onComplete: animate
+                });
+             }
+             animate();*/
+        })();
+    </script>
+
+{% endblock %}
