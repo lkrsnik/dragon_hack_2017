@@ -31,9 +31,9 @@ class StatisticsView(View):
             dictionary.append(user_dict)
         # context['users']  = dictionary
 
-        context['users_points'] = sorted(dictionary, key=itemgetter('points'))
-        context['users_attack_points'] = sorted(dictionary, key=itemgetter('attack_points'))[:3]
-        context['users_victim_points'] = sorted(dictionary, key=itemgetter('victim_points'))[:3]
+        context['users_points'] = sorted(dictionary, key=itemgetter('points'), reverse=True)
+        context['users_attack_points'] = sorted(dictionary, key=itemgetter('attack_points'), reverse=True)[:3]
+        context['users_victim_points'] = sorted(dictionary, key=itemgetter('victim_points'), reverse=True)[:3]
 
         return render(request, 'statistics.html', context)
 

@@ -3,65 +3,77 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <p class="scoretitle">Best users</p>
         <div class="panel panel-default">
-
             <!-- Table -->
             <table class="table">
                 <tr>
-                    <td>User1</td>
-                    <td>Score1</td>
+                    <td>User</td>
+                    <td>Attack points</td>
+                    <td>Victim points</td>
+                    <td>Exe points</td>
+                    <td>Pdf points</td>
+                    <td>Web points</td>
+                    <td>Null points</td>
+                    <td>Xls points</td>
+                    <td>Total points</td>
                 </tr>
+                {% for point in users_points %}
                 <tr>
-                    <td>User1</td>
-                    <td>Score1</td>
+                    <td>{{point.username}}</td>
+                    <td>{{point.attack_points}}</td>
+                    <td>{{point.victim_points}}</td>
+                    <td>{{point.exe_points}}</td>
+                    <td>{{point.pdf_points}}</td>
+                    <td>{{point.web_points}}</td>
+                    <td>{{point.null_points}}</td>
+                    <td>{{point.xls_points}}</td>
+
+                    <td>{{point.points}}</td>
                 </tr>
-                <tr>
-                    <td>User1</td>
-                    <td>Score1</td>
-                </tr>
+                {% endfor %}
             </table>
         </div>
     </div>
     <div class="col-md-6">
         <p class="scoretitle">Best attackers</p>
         <div class="panel panel-default">
-
             <!-- Table -->
             <table class="table">
                 <tr>
-                    <td>User1</td>
-                    <td>Score1</td>
+                    <td>User</td>
+                    <td>Attack points</td>
+                    <td>Total points</td>
                 </tr>
+                {% for point in users_attack_points %}
                 <tr>
-                    <td>User1</td>
-                    <td>Score1</td>
+                    <td>{{point.username}}</td>
+                    <td>{{point.attack_points}}</td>
+                    <td>{{point.points}}</td>
                 </tr>
-                <tr>
-                    <td>User1</td>
-                    <td>Score1</td>
-                </tr>
+                {% endfor %}
             </table>
         </div>
-
+    </div>
+    <div class="col-md-6">
         <p class="scoretitle">Worst victims</p>
         <div class="panel panel-default">
 
             <!-- Table -->
             <table class="table">
                 <tr>
-                    <td>User1</td>
-                    <td>Score1</td>
+                    <td>User</td>
+                    <td>Victim points</td>
+                    <td>Total points</td>
                 </tr>
+                {% for point in users_victim_points %}
                 <tr>
-                    <td>User1</td>
-                    <td>Score1</td>
+                    <td>{{point.username}}</td>
+                    <td>{{point.victim_points}}</td>
+                    <td>{{point.points}}</td>
                 </tr>
-                <tr>
-                    <td>User1</td>
-                    <td>Score1</td>
-                </tr>
+                {% endfor %}
             </table>
         </div>
     </div>
