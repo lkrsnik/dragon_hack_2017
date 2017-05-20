@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <canvas id="canvas" width="300" height="300"></canvas>
+    <script src="fabric.js"></script>
+
+    <script>
+      function animate_one(element, direction, min, max, duration) {
+        element.set(direction, min);
+        canvas.add(element);
+        element.animate(direction, max, { 
+          duration: duration,
+          onChange: canvas.renderAll.bind(canvas),
+        });
+      }
+ 
+      function animate(element, minx, miny, maxx, maxy, duration) {
+        animate_one(element, 'top', miny, maxy, duration);
+        animate_one(element, 'left', minx, maxx, duration);
+      }
+
+      var x0 = 20;
+      var y0 = 20;
+      var x1 = 250;
+      var y1 = 250;
+
+      var canvas = new fabric.Canvas('canvas');
+      var rect = new fabric.Rect({
+        top : 0,
+        left : 0,
+        width : 20,
+        height : 20,
+        fill : 'red'
+      });
+
+      canvas.add(rect);
+      animate(rect, x0, y0, x1, y1, len);
+    </script>
+</body>
+</html>
