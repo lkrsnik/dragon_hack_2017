@@ -54,7 +54,7 @@ ROOT_URLCONF = 'dragon_hack_2017.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['los_pollos_hermanos/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
