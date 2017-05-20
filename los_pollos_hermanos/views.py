@@ -82,3 +82,7 @@ class AttackView(View):
 
         # <view logic>
         return render(request, 'attack.html', {})
+
+
+class VisualisationView(TemplateView):
+    template_name = "visualisation.html"
