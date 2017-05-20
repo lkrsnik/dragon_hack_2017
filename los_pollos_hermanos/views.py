@@ -6,13 +6,36 @@ from django.views import View
 from django.views.generic import TemplateView
 
 from django.shortcuts import render
+from operator import itemgetter
 
 # Create your views here.
 from los_pollos_hermanos.models import Gamer, Attack
 
 
-class StatisticsView(TemplateView):
-    template_name = "statistics.html"
+class StatisticsView(View):
+    def get(self, request):
+        context = {}
+        users = Gamer.objects.all()
+        dictionary = []
+        for user in users:
+            user_dict = {'id': user.id,
+                         'username': user.username,
+                         'points': len(Attack.objects.filter(attacker=user)) - len(Attack.objects.filter(victim=user)),
+                         'attack_points': len(Attack.objects.filter(attacker=user)),
+                         'victim_points': len(Attack.objects.filter(victim=user)),
+                         'exe_points': len(Attack.objects.filter(attacker=user, type='exe')) - len(Attack.objects.filter(victim=user, type='exe')),
+                         'pdf_points': len(Attack.objects.filter(attacker=user, type='pdf')) - len(Attack.objects.filter(victim=user, type='pdf')),
+                         'web_points': len(Attack.objects.filter(attacker=user, type='web')) - len(Attack.objects.filter(victim=user, type='web')),
+                         'xls_points': len(Attack.objects.filter(attacker=user, type='xls')) - len(Attack.objects.filter(victim=user, type='xls')),
+                         'null_points': len(Attack.objects.filter(attacker=user, type='null')) - len(Attack.objects.filter(victim=user, type='null'))}
+            dictionary.append(user_dict)
+        # context['users']  = dictionary
+
+        context['users_points'] = sorted(dictionary, key=itemgetter('points'))
+        context['users_attack_points'] = sorted(dictionary, key=itemgetter('attack_points'))[:3]
+        context['users_victim_points'] = sorted(dictionary, key=itemgetter('victim_points'))[:3]
+
+        return render(request, 'statistics.html', context)
 
 
 class AttackView(View):
@@ -34,7 +57,7 @@ class AttackView(View):
             type = request.GET.get('type')
             if type is None:
                 raise ValueError
-        except (ValueError):
+        except ValueError:
             msg = 'No type given'
             return render(request, 'invalid_request.html', {'details': msg})
 
