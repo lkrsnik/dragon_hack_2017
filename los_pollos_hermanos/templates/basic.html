@@ -13,14 +13,16 @@
         <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
         <script src="{% static "js/bootstrap.min.js" %}"></script>
         <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#">Los Pollos Hermanos</a>
-                </div>
-            <ul class="nav navbar-nav">
-                <li><a href="#">Statistics</a></li>
-                <li><a href="#">Visualisation</a></li>
-            </ul>
+            <div class="col-xs-10 col-sm-offset-1">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Los Pollos Hermanos</a>
+                    </div>
+                <ul class="nav navbar-nav pull-right">
+                    <li><a href="/statistics">Statistics</a></li>
+                    <li><a href="/visualisation">Visualisation</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
 
