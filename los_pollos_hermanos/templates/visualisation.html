@@ -110,13 +110,17 @@
                 }
 
                 function remove_element(elem, after) {
-                    setTimeout(function() { elem.setOpacity(0); canvas.add(elem); garbage.push(elem); }, after + 70);
+                    setTimeout(function() {
+                        elem.setOpacity(0);
+                        canvas.add(elem);
+                        garbage.push(elem);
+                    }, after + 70);
                 }
-                function animate_commet(N, base_size, dist, minx, miny, maxx, maxy, duration) {
-                    animate_commet_particle(0, N, base_size, dist, minx, miny, maxx, maxy, duration);
+                function animate_comet(N, base_size, dist, minx, miny, maxx, maxy, color, duration) {
+                    animate_comet_particle(0, N, base_size, dist, minx, miny, maxx, maxy, color, duration);
                 }
 
-                function animate_commet_particle(n, N, base_size, dist, minx, miny, maxx, maxy, duration) {
+                function animate_comet_particle(n, N, base_size, dist, minx, miny, maxx, maxy, color, duration) {
                     if(n == N) {
                         return;
                     }
@@ -125,11 +129,14 @@
                         top : 0,
                         left : 0,
                         radius : rel *  base_size,
-                        fill : 'red',
+                        fill : color,
                         opacity : rel,
                     });
+
                     animate(rect, minx, miny, maxx, maxy, duration);
-                    setTimeout(function() { animate_commet_particle(n + 1, N, base_size, dist, minx, miny, maxx, maxy, duration); }, dist);
+                    setTimeout(function() {
+                        animate_comet_particle(n + 1, N, base_size, dist, minx, miny, maxx, maxy, color, duration);
+                    }, dist);
                 }
 
                 function animate(rect, minx, miny, maxx, maxy, duration) {
@@ -146,11 +153,39 @@
                         onChange: canvas.renderAll.bind(canvas),
                     });
                 }
+                function animate_bubble(x, y, minr, maxr, color, length) {
+                    var circ = new fabric.Circle({
+                      top : y - minr,
+                      left : x - minr,
+                      radius : minr,
+                      fill: "rgba(0, 0, 0, 0)",
+                      stroke: color,
+                      strokeWidth: 4,
+                    });
+                    canvas.add(circ);
 
+                    animate_one(circ, 'radius', minr, maxr, length);
+                    animate_one(circ, 'top', y - minr, y - maxr, length);
+                    animate_one(circ, 'left', x - minr, x - maxr, length);
+                    animate_one(circ, 'opacity', 1, 0, length);
+
+                    remove_element(circ, length);
+                }
+
+                function get_attack_color(attack) {
+                    var table = {
+                        "null": "black",
+                        "pdf": "red",
+                        "xls": "green",
+                        "exe": "brown",
+                        "web": "blue"
+                    };
+
+                    return table[attack['type']];
+                }
 
                 // atack animations
                 var attacks = data['attacks'];
-                // console.log(attacks);
                 for (var i in attacks)
                 {
                     var attacker_c = user_circles[attacks[i]['attacker_username']];
@@ -160,9 +195,12 @@
                     var y0 = attacker_c.top + attacker_c.radius;
                     var x1 = victim_c.left + victim_c.radius;
                     var y1 = victim_c.top + victim_c.radius;
-                    var length = 500;
 
-                    animate_commet(5, 5, 1, x0, y0, x1, y1, length);
+                    var radius = attacker_c.radius;
+                    var length = 500; // TODO: constant speed not constant time
+
+                    animate_comet(5, 5, 1, x0, y0, x1, y1, get_attack_color(attacks[i]), length);
+                    animate_bubble(x0, y0, radius, radius + 20, attacker_c.getFill(), length);
                 }
 
                 // garbage collection
