@@ -109,8 +109,11 @@ class AttackView(View):
         return render(request, 'attack.html', {'url': url})
 
 
-class VisualisationView(TemplateView):
-    template_name = "visualisation.html"
+class VisualisationView(View):
+    def get(self, request):
+        url = request.build_absolute_uri().split('/')[2]
+        return render(request, 'visualisation.html', {'url': url})
+
 
 class AttackAPIView(View):
     def get(self, request):
