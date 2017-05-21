@@ -8,6 +8,38 @@
     <script src="fabric.js"></script>
 
     <script>
+      var canvas = new fabric.Canvas('canvas');
+
+      function animate_commet(N, base_size, dist, minx, miny, maxx, maxy, duration) {
+        animate_commet_particle(0, N, base_size, dist, minx, miny, maxx, maxy, duration);
+      }
+ 
+      function animate_commet_particle(n, N, base_size, dist, minx, miny, maxx, maxy, duration) {
+        if(n == N) {
+          return;
+        }
+
+        var rel = 1 - n / N;
+        var rect = new fabric.Circle({
+          top : 0,
+          left : 0,
+          radius : rel *  base_size,
+          fill : 'red',
+          opacity : rel,
+        });
+        animate(rect, minx, miny, maxx, maxy, duration);
+
+        setTimeout(function() { animate_commet_particle(n + 1, N, base_size, dist, minx, miny, maxx, maxy, duration); }, dist);
+      }
+ 
+      function animate(rect, minx, miny, maxx, maxy, duration) {
+        canvas.add(rect);
+        animate_one(rect, 'top', miny, maxy, duration);
+        animate_one(rect, 'left', minx, maxx, duration);
+
+        setTimeout(function() { rect.setOpacity(0); canvas.add(rect); }, duration + 70);
+      }
+
       function animate_one(element, direction, min, max, duration) {
         element.set(direction, min);
         canvas.add(element);
@@ -16,28 +48,15 @@
           onChange: canvas.renderAll.bind(canvas),
         });
       }
- 
-      function animate(element, minx, miny, maxx, maxy, duration) {
-        animate_one(element, 'top', miny, maxy, duration);
-        animate_one(element, 'left', minx, maxx, duration);
-      }
 
       var x0 = 20;
       var y0 = 20;
       var x1 = 250;
       var y1 = 250;
+      var length = 500;
 
-      var canvas = new fabric.Canvas('canvas');
-      var rect = new fabric.Rect({
-        top : 0,
-        left : 0,
-        width : 20,
-        height : 20,
-        fill : 'red'
-      });
-
-      canvas.add(rect);
-      animate(rect, x0, y0, x1, y1, len);
+      //animate(x0, y0, x1, y1, length);
+      animate_commet(5, 5, 0, x0, y0, x1, y1, length);
     </script>
 </body>
 </html>
