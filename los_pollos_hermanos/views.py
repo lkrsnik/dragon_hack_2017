@@ -123,7 +123,7 @@ class AttackAPIView(View):
             request_time = datetime.datetime.strptime(last_update.split('.')[0], '%Y-%m-%dT%H:%M:%S')
             attacks_qs = Attack.objects.filter(datetime__gt=request_time)
         except (TypeError, ValueError):
-            attacks_qs = Attack.objects.all()
+            attacks_qs = []
         test = Attack.objects.all()[0]
         time = datetime.datetime.now()
         attacks = []
