@@ -105,7 +105,8 @@ class AttackView(View):
             pass
 
         # <view logic>
-        return render(request, 'attack.html', {})
+        url = request.build_absolute_uri().split('/')[2]
+        return render(request, 'attack.html', {'url': url})
 
 
 class VisualisationView(TemplateView):
@@ -135,6 +136,5 @@ class AttackAPIView(View):
 
         users = Gamer.objects.all()
         gamers = get_all_users(users)
-        url = request.build_absolute_uri().split('/')[2]
 
-        return JsonResponse({'time': time, 'attacks': attacks, 'gamers': gamers, 'url': url})
+        return JsonResponse({'time': time, 'attacks': attacks, 'gamers': gamers})
