@@ -13,21 +13,24 @@
     <script src="{% static "js/fabric.min.js" %}"></script>
     <script>
         (function() {
-
-            var last_call_time = new Date();
-            last_call_time.setSeconds(last_call_time.getSeconds() - 2);
+            var last_call_time = null;
+            var garbage = [];
+            function gc_round(canvas) {
+                while(garbage.length > 0) {
+                    canvas.remove(garbage.pop());
+                }
+            }
 
             init_image = function (data) {
+                last_call_time = data['time'];
 
-
-                data_users = data['gamers']['users_points']
-                console.log(data_users);
+                data_users = data['gamers']['users_points'];
 
                 var max_points = - Infinity;
                 for (var i in data_users) {
                     p = Math.abs(data_users[i]['points']);
                     if (p > max_points)
-                        max_points = p
+                        max_points = p;
                 }
 
                 var canvas = this.__canvas = new fabric.StaticCanvas('c');
@@ -38,14 +41,13 @@
                 // compute max radius of a user circle
                 var pi = 3.14;
                 var minhw = Math.min(canvas.getWidth(), canvas.getHeight());
-                var num_users = Object.keys(data_users).length
-
+                var num_users = Object.keys(data_users).length;
 
                 // radius of a big circle
                 var max_circ_size = (pi * minhw) / (num_users * (1 + pi));
                 var big_radius = minhw - 20;
 
-                var user_circles = [];
+                var user_circles = {};
                 var i = 0;
                 var min_circle_size = 20;
 
@@ -53,16 +55,16 @@
                 {
                     angle = k * 2 * pi / num_users;
                     p = data_users[k]['points'];
-                    console.log(p);
+
                     var size = max_circ_size * 0.7 * Math.abs(p) / max_points + min_circle_size;
 
                     c = new fabric.Circle({
                             top: canvas.getHeight() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.sin(angle) - size,
                             left: canvas.getWidth() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.cos(angle) - size,
                             radius: size,
-                            fill: p > 0 ? '#59ff59' : '#ff9191' })
-                    user_circles.push(c);
-                    console.log(p > 0 ? '#5990ff' : '#ff9191')
+                            fill: p > 0 ? '#59ff59' : '#ff9191' });
+                    user_circles[data_users[k]['username']] = c;
+
 
                     rect_h = 20;
                     rect_w = size * 2 + 5;
@@ -106,27 +108,84 @@
 
                     i++;
                 }
+
+                function remove_element(elem, after) {
+                    setTimeout(function() { elem.setOpacity(0); canvas.add(elem); garbage.push(elem); }, after + 70);
+                }
+                function animate_commet(N, base_size, dist, minx, miny, maxx, maxy, duration) {
+                    animate_commet_particle(0, N, base_size, dist, minx, miny, maxx, maxy, duration);
+                }
+
+                function animate_commet_particle(n, N, base_size, dist, minx, miny, maxx, maxy, duration) {
+                    if(n == N) {
+                        return;
+                    }
+                    var rel = 1 - n / N;
+                    var rect = new fabric.Circle({
+                        top : 0,
+                        left : 0,
+                        radius : rel *  base_size,
+                        fill : 'red',
+                        opacity : rel,
+                    });
+                    animate(rect, minx, miny, maxx, maxy, duration);
+                    setTimeout(function() { animate_commet_particle(n + 1, N, base_size, dist, minx, miny, maxx, maxy, duration); }, dist);
+                }
+
+                function animate(rect, minx, miny, maxx, maxy, duration) {
+                    canvas.add(rect);
+                    animate_one(rect, 'top', miny, maxy, duration);
+                    animate_one(rect, 'left', minx, maxx, duration);
+                    remove_element(rect, duration);
+                }
+                function animate_one(element, direction, min, max, duration) {
+                    element.set(direction, min);
+                    canvas.add(element);
+                    element.animate(direction, max, {
+                        duration: duration,
+                        onChange: canvas.renderAll.bind(canvas),
+                    });
+                }
+
+
+                // atack animations
+                var attacks = data['attacks'];
+                // console.log(attacks);
+                for (var i in attacks)
+                {
+                    var attacker_c = user_circles[attacks[i]['attacker_username']];
+                    var victim_c = user_circles[attacks[i]['victim_username']];
+                    console.log(attacks[i]['attacker_username']);
+                    var x0 = attacker_c.left + attacker_c.radius;
+                    var y0 = attacker_c.top + attacker_c.radius;
+                    var x1 = victim_c.left + victim_c.radius;
+                    var y1 = victim_c.top + victim_c.radius;
+                    var length = 500;
+
+                    animate_commet(5, 5, 1, x0, y0, x1, y1, length);
+                }
+
+                // garbage collection
+                gc_round(canvas);
             }
 
             var update_fun = function() {
+                var last_call_str = null;
+                if(last_call_time !== null) {
+                  last_call_str = last_call_time;
+                }
+
                 $.ajax({
-                        url: 'http://localhost:8000/api',
+                        url: 'http://{{url}}/api',
                         type: 'GET',
-                        data: {last_update: last_call_time.toISOString(),},
+                        data: {last_update: last_call_str},
                         success: function (data) { init_image(data) }
                 });
                 ast_call_time = new Date();
             }
 
             update_fun();
-
-            var timer_var = setInterval(update_timer, 2000);
-
-            function update_timer() {
-                // make animations here
-
-                update_fun();
-            }
+            setInterval(update_fun, 2000);
 
 })();
     </script>
