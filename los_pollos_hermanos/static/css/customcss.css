@@ -1,3 +1,35 @@
 p.scoretitle {
-    font-size: 20px;
+    font-size: 25px;
+    text-align: center;
+}
+
+tr.table-header td {
+    background-color: #dddddd;
+    margin-top: 30px;
+}
+
+body {
+    background-image: url('/los_pollos_hermanos/static/img/background.gif');
+
+}
+
+.white-background {
+    background-color: #fdfdfd;
+    border-radius: 5px;
+    padding: 20px 15px;
+    margin-top: 20px;
+}
+
+.margin-top-10 {
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+#canvas-container {
+    overflow:auto;
+}
+
+div.footer
+{
+    padding-top: 15px;
 }
