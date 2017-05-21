@@ -10,6 +10,10 @@
     <script>
       var canvas = new fabric.Canvas('canvas');
 
+      function remove_element(elem, after) {
+        setTimeout(function() { elem.setOpacity(0); canvas.add(elem); }, after + 70);
+      }
+
       function animate_commet(N, base_size, dist, minx, miny, maxx, maxy, duration) {
         animate_commet_particle(0, N, base_size, dist, minx, miny, maxx, maxy, duration);
       }
@@ -37,7 +41,7 @@
         animate_one(rect, 'top', miny, maxy, duration);
         animate_one(rect, 'left', minx, maxx, duration);
 
-        setTimeout(function() { rect.setOpacity(0); canvas.add(rect); }, duration + 70);
+        remove_element(rect, duration);
       }
 
       function animate_one(element, direction, min, max, duration) {
@@ -55,8 +59,43 @@
       var y1 = 250;
       var length = 500;
 
-      //animate(x0, y0, x1, y1, length);
       animate_commet(5, 5, 0, x0, y0, x1, y1, length);
+
+      var smallr = 30;
+      var minr = 30;
+      var maxr = 45;
+      var x = 200;
+      var y = 50;
+
+      var circ_small = new fabric.Circle({
+        top : y - smallr,
+        left : x - smallr,
+        radius: smallr,
+        fill: 'red'
+      });
+      canvas.add(circ_small);
+
+
+      function animate_circle(x, y, minr, maxr, length) {
+        var circ = new fabric.Circle({
+          top : y - minr,
+          left : x - minr,
+          radius : minr,
+          fill: "rgba(0, 0, 0, 0)",
+          stroke: 'red',
+          strokeWidth: true,
+        });
+        canvas.add(circ);
+
+        animate_one(circ, 'radius', minr, maxr, length);
+        animate_one(circ, 'top', y - minr, y - maxr, length);
+        animate_one(circ, 'left', x - minr, x - maxr, length);
+        animate_one(circ, 'opacity', 1, 0, length);
+        
+        remove_element(circ, length);
+      }
+
+      animate_circle(x, y, minr, maxr, 1000);
     </script>
 </body>
 </html>
