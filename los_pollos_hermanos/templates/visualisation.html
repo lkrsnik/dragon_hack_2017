@@ -57,17 +57,28 @@
                     p = data_users[k]['points'];
 
                     var size = max_circ_size * 0.7 * Math.abs(p) / max_points + min_circle_size;
+                    var top = canvas.getHeight() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.sin(angle) - size;
+                    var left = canvas.getWidth() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.cos(angle) - size;
 
                     c = new fabric.Circle({
-                            top: canvas.getHeight() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.sin(angle) - size,
-                            left: canvas.getWidth() / 2 + (big_radius - 2 * max_circ_size) / 2 * Math.cos(angle) - size,
+                            top: top,
+                            left: left,
                             radius: size,
                             fill: p > 0 ? '#59ff59' : '#ff9191' });
                     user_circles[data_users[k]['username']] = c;
 
+                    border = new fabric.Circle({
+                            top: top - 8,
+                            left: left - 8,
+                            radius: size + 4,
+                            fill: "rgba(0, 0, 0, 0)",
+                            strokeWidth: 8,
+                            stroke: '#fdfdfd'
+                    });
+
 
                     rect_h = 20;
-                    rect_w = size * 2 + 5;
+                    rect_w = size * 2;
                     p = data_users[k]['attack_points'] + data_users[k]['victim_points'];
                     ratio = data_users[k]['attack_points'] / p;
                     r1 = new fabric.Rect({
@@ -104,7 +115,7 @@
                             fontSize: 20
                     });
 
-                    canvas.add(c, r1, r2, score, user);
+                    canvas.add(c, r1, r2, border, score, user);
 
                     i++;
                 }
