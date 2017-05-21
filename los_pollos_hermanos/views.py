@@ -120,6 +120,8 @@ class AttackAPIView(View):
         try:
             # 2015-04-10 23:12:23
             last_update = request.GET.get('last_update')
+            if last_update == '':
+                raise ValueError
             request_time = datetime.datetime.strptime(last_update.split('.')[0]+'/'+str(int(float('0.' + last_update.split('.')[1]) * 1000000)),
                                                       '%Y-%m-%dT%H:%M:%S/%f')
             attacks_qs = Attack.objects.filter(datetime__gt=request_time)
