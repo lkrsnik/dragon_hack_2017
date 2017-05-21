@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import datetime
 # import dateutil
+import json
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
@@ -14,6 +15,8 @@ from operator import itemgetter
 
 # Create your views here.
 from los_pollos_hermanos.models import Gamer, Attack
+
+import requests
 
 
 class StatisticsView(View):
@@ -89,6 +92,17 @@ class AttackView(View):
         attack.type = type
         attack.version = request.GET.get('version', '')
         attack.save()
+
+        try:
+            attack_dict = {}
+            attack_dict['data_name'] = 'attack'
+            attack_dict['team_name'] = 'los_pollos_hermanos'
+            attack_dict['unit'] = 'attack'
+            attack_dict['value'] = attack.attacker.id
+            attack_dict['value_1'] = attack.victim.id
+            r = requests.post('http://cloud.biview.com:17002/add-data/', data=attack_dict)
+        except Exception as e:
+            pass
 
         # <view logic>
         return render(request, 'attack.html', {})
