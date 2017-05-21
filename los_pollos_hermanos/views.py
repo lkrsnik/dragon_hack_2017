@@ -120,16 +120,17 @@ class AttackAPIView(View):
         try:
             # 2015-04-10 23:12:23
             last_update = request.GET.get('last_update')
+            request_time = datetime.datetime.strptime(last_update.split('.')[0], '%Y-%m-%dT%H:%M:%S')
+            attacks_qs = Attack.objects.filter(datetime__gt=request_time)
         except (TypeError, ValueError):
-            msg = 'Incorrect date_time format'
-            return render(request, 'invalid_request.html', {'details': msg})
+            attacks_qs = Attack.objects.all()
         test = Attack.objects.all()[0]
         time = datetime.datetime.now()
         attacks = []
         # time = dateutil.parser.parse('2017-05-20T20:03:06.178')
 
-        request_time = datetime.datetime.strptime(last_update.split('.')[0], '%Y-%m-%dT%H:%M:%S')
-        attacks_qs = Attack.objects.filter(datetime__gt=request_time)
+
+
         for attack_qs in attacks_qs:
             attack = {}
             attack['attacker_username'] = attack_qs.attacker.username
